@@ -7,22 +7,13 @@ import ceylon.language.meta.declaration {
 	ValueDeclaration
 }
 
-"Apply to case values or value constructors to make them parseable."
+"Apply to case values or value constructors to make them parseable. You may specify multiple names here."
 see (`class CaseValueParserFactory`)
 shared annotation OptionValueAnnotation optionValue(
-	"Value on the command line for this enumerated value. If no value is entered here, one is generated from the name of the element."
-	String name = "\0\0\0\0default\0\0\0") => OptionValueAnnotation(name);
+	"Allowed values on the command line for this enumerated value. If no value is entered here, one is generated from the name of the element."
+	String* names) => OptionValueAnnotation(names);
 
 "Annotation class for [[optionValue]]."
-shared final annotation class OptionValueAnnotation(String nameArg)
+shared final annotation class OptionValueAnnotation(shared [String*] names)
 		satisfies OptionalAnnotation<OptionValueAnnotation,ValueDeclaration|ValueConstructorDeclaration> {
-
-	"Returns the name of this value or null, if none was given by the user."
-	shared String? name {
-		if (nameArg != "\0\0\0\0default\0\0\0") {
-			return nameArg;
-		} else {
-			return null;
-		}
-	}
 }

@@ -23,19 +23,21 @@ Map<String,Result>? getNameCaseValues<out Result>(Class<Result> forClass) {
 	value valueConstructors = forClass.getValueConstructors(`OptionValueAnnotation`);
 
 	if(nonempty valueConstructors) {
-		return map { for(valueConstructor in valueConstructors) if(exists annotation = valueConstructor.declaration.annotations<OptionValueAnnotation>().first)
+		return map {
+			for(valueConstructor in valueConstructors) if(exists annotation = valueConstructor.declaration.annotations<OptionValueAnnotation>().first)
 			if(is Result actualValue = valueConstructor.declaration.get())
-			(annotation.name else toOptionName(valueConstructor.declaration.name) )->actualValue };
+			for(name in (if(annotation.names nonempty) then annotation.names else [toOptionName(valueConstructor.declaration.name)])) name->actualValue
+		};
 	}
 
 	// Try case values instead.
 	value caseValues = forClass.caseValues;
 
 	if(nonempty caseValues) {
-		return map { for(caseValue in caseValues)
-			if(exists valueDeclaration = classDeclaration(caseValue).objectValue)
+		return map {
+			for(caseValue in caseValues) if(exists valueDeclaration = classDeclaration(caseValue).objectValue)
 			if(exists annotation = valueDeclaration.annotations<OptionValueAnnotation>().first)
-			(annotation.name else toOptionName(type(caseValue).declaration.name))->caseValue };
+			for(name in (if(annotation.names nonempty) then annotation.names else [ toOptionName(type(caseValue).declaration.name) ])) name->caseValue };
 	}
 
 	// Failed to find a matching cases.
