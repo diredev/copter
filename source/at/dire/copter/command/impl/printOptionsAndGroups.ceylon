@@ -39,8 +39,15 @@ shared void printOptionsAndGroups(MappedOptions<Anything, Class<Command>> mapped
 	// Get the max length of items to print afterwards.
 	value maxDescLength = max(allRows.map((name->option)=>name.size).follow(14));
 
-	for(descRow->descItem in allRows) {
-		print("  ``descRow.padTrailing(maxDescLength)``  ``extractDescriptionFrom(descItem)``");
+	for(descHeader->descItem in allRows) {
+		// Split lines here to support indented doc output
+		value descriptionRows = extractDescriptionFrom(descItem).split { splitting='\n'.equals; groupSeparators = false; };
+		print("  ``descHeader.padTrailing(maxDescLength)``  ``descriptionRows.first``");
+
+		for(descriptionRow in descriptionRows.rest) {
+			process.write(" ".repeat(maxDescLength+4));
+			process.writeLine(descriptionRow);
+		}
 	}
 
 	//TODO: What about these groups?
@@ -56,3 +63,4 @@ shared void printOptionsAndGroups(MappedOptions<Anything, Class<Command>> mapped
 		}
 	}
 }
+
