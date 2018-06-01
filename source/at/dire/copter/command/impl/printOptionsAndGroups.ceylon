@@ -50,17 +50,25 @@ shared void printOptionsAndGroups(MappedOptions<Anything, Class<Command>> mapped
 		}
 	}
 
-	//TODO: What about these groups?
-	// Skip absorbed groups. Those have been handled before.
-	for(group in mappedOptions.groups.filter(not(MappedGroup.absorbed))) {
-		process.writeLine();
+	// Print non-absorbed groups
+	printGroups(mappedOptions.groups, formatter);
+}
 
-		//TODO: Label?
-		print(group.targetValue.name);
+"Print help output for the given groups. Note that this will not print absorbed groups but supports
+ normal groups found inside absorbed groups; recursively."
+void printGroups({MappedGroup*} groups, OptionFormatter formatter) {
+	for(group in groups) {
+		if(!group.absorbed) {
+			process.writeLine();
 
-		if(exists groupMapper = group.innerMapper) {
-			printOptionsAndGroups(groupMapper, formatter);
+			//TODO: Label?
+			print(group.targetValue.name);
+
+			if(exists groupMapper = group.innerMapper) {
+				printOptionsAndGroups(groupMapper, formatter);
+			}
+		} else if(exists childGroups = group.innerMapper?.groups) {
+			printGroups(childGroups, formatter);
 		}
 	}
 }
-
