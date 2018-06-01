@@ -6,15 +6,17 @@ import at.dire.copter.parse.core {
 see(`class UnionTypeValueParser`)
 object nullParser satisfies ValueParser<Null> {
 	shared actual ParseException? parse(String?[] values) {
-		//TODO: how to handle this case?? Use last value?
-		"Cannot use null parser to handle lists containing anything but null."
-		assert(values.any((element) => element exists));
+		// Only allow actual null values.
+		if(values.any((element) => element exists)) {
+			return ParseException("Cannot use null parser to handle lists containing anything but null.");
+		}
+
 		return null;
 	}
 
 	shared actual ParseException? parseSingle(String? stringValue) {
 		if(exists stringValue) {
-			return ParseException("Failed to parse value ``stringValue``.");
+			return ParseException("Failed to parse '``stringValue``'.");
 		}
 
 		return null;

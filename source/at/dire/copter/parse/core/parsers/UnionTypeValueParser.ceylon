@@ -20,12 +20,12 @@ class UnionTypeValueParser<out Result = Anything>(
 
 			if(!is ParseException result) {
 				return result;
-			} else {
+			} else if(!parseException exists) {
 				parseException = result;
 			}
 		}
 
-		// No parser was able to handle the value. Return the last ParseException or fallback to a generic message.
+		// No parser was able to handle the value. Return the first ParseException (or fallback to a generic message).
 		return parseException else ParseException("Failed to parse values to any union type.");
 	}
 
@@ -43,12 +43,12 @@ class UnionTypeValueParser<out Result = Anything>(
 
 			if(!is ParseException result) {
 				return result;
-			} else {
+			} else if(!parseException exists) {
 				parseException = result;
 			}
 		}
 
-		// No matching parser. Return the last ParseException if possible.
+		// No matching parser. Return the first ParseException (if any)
 		return parseException else ParseException("Failed to parse values to any union type.");
 	}
 
