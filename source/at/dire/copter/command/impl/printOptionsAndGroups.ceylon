@@ -60,9 +60,7 @@ void printGroups({MappedGroup*} groups, OptionFormatter formatter) {
 	for(group in groups) {
 		if(!group.absorbed) {
 			process.writeLine();
-
-			//TODO: Label?
-			print(group.targetValue.name);
+			print(extractDescription(group.targetValue));
 
 			if(exists groupMapper = group.innerMapper) {
 				printOptionsAndGroups(groupMapper, formatter);
